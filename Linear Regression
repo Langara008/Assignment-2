@@ -1,0 +1,50 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+
+# Generate a sample dataset
+np.random.seed(42)
+sample_size = 100
+speed = np.random.randint(20, 100, size=sample_size)
+weather = np.random.randint(0, 2, size=sample_size)  # 0: clear, 1: adverse
+road_type = np.random.randint(0, 3, size=sample_size)  # 0: urban, 1: rural, 2: highway
+driver_age = np.random.randint(18, 70, size=sample_size)
+vehicle_type = np.random.randint(0, 2, size=sample_size)  # 0: car, 1: truck
+
+# Calculate severity with some randomness
+severity = 0.3 * speed + 0.5 * weather + 0.2 * road_type + 0.1 * driver_age + 0.4 * vehicle_type + np.random.normal(0, 5, size=sample_size)
+
+# Create a DataFrame
+data = pd.DataFrame({
+    'speed': speed,
+    'weather': weather,
+    'road_type': road_type,
+    'driver_age': driver_age,
+    'vehicle_type': vehicle_type,
+    'severity': severity
+})
+
+# Define the dependent variable and independent variables
+dependent_variable = 'severity'
+independent_variables = ['speed', 'weather', 'road_type', 'driver_age', 'vehicle_type']
+
+# Split the data into training and test sets
+X = data[independent_variables]
+y = data[dependent_variable]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create and train the linear regression model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Plot the results
+plt.figure(figsize=(10, 6))
+plt.scatter(X_train['speed'], y_train, color='blue', label='Actual Severity')
+plt.scatter(X_train['speed'], model.predict(X_train), color='red', label='Predicted Severity')
+plt.title('Accident Severity vs Speed')
+plt.xlabel('Speed')
+plt.ylabel('Accident Severity')
+plt.legend()
+plt.show()
